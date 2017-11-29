@@ -1,8 +1,7 @@
-import java.util.List;
 import java.util.Random;
 
 public class Main {
-    static int armyUnitsSize = 3;
+    static int armyUnitsSize = 5;
 
     public static void main(String[] args) {
         Random random = new Random();
@@ -16,72 +15,64 @@ public class Main {
         armyGenerator(armyUnitsSize, enemyArmy, random);
 
         fight(yourArmy, enemyArmy);
-
         System.out.println("Summary");
-        System.out.println("Your health: "+healthSum(yourArmy) +"Enemy Health: "+healthSum(enemyArmy));
+        System.out.println("Your health: " + healthSum(yourArmy) + "Enemy Health: " + healthSum(enemyArmy));
 
     }
 
     private static void fight(Monster[] yourArmy, Monster[] enemyArmy) {
-        Random random = new Random();
         int round = 1;
-        int armyUnitIterator = 0;
-        int yourSoldiers = armyUnitsSize;
-        int enemySoldiers = armyUnitsSize;
-        boolean victory = false;
-        byte turnPlayer = 1;
+        boolean player1 = false;
+        boolean player2 = false;
+        while (player1 == false && player2 == false) {
+            System.out.println("______ROUND: " + round+"____________");
+            round++;
+            player1 = fight2(yourArmy, enemyArmy);
+            player2 = fight2(enemyArmy, yourArmy);
+        }
+        if (player1 == true)
+            System.out.println("Player 2 win");
+        if (player2 == true)
+            System.out.println("Player 1 win");
+    }
 
-        int yourLiveSoldiers = 0;
-        int enemyLiveSoldiers = 0;
+    public static boolean fight2(Monster[] attackerArmy, Monster[] defenderArmy) {
+        int tmp;
         boolean endFight = false;
-        while (endFight == false) {
-            for (int i = 0; i < armyUnitsSize; i++) {
-                if (turnPlayer == 1) {
-                    System.out.println("ROUND: " + round);
-                    round++;
-                    if (yourArmy[i].isLive()) {
-                        yourArmy[i].attack(enemyArmy[random.nextInt(enemySoldiers)]);
-                        turnPlayer = 2;
-                    } else {
-                        yourLiveSoldiers = howManySoldiers(yourArmy);
-                        if (yourLiveSoldiers >= armyUnitsSize) {
-                            endFight = true;
-                            break;
-                        }
-                        continue;
-                    }
-                } else {
-                    if (enemyArmy[i].isLive()) {
-                        enemyArmy[i].attack(yourArmy[random.nextInt(yourSoldiers)]);
-                        turnPlayer = 1;
-                    } else {
-                        enemyLiveSoldiers = howManySoldiers(yourArmy);
-                        if (enemyLiveSoldiers >= armyUnitsSize) {
-                            endFight = true;
-                            break;
-                        }
-                        continue;
+        Random random = new Random();
+        for (int i = 0; i < armyUnitsSize; i++) {
+            if (attackerArmy[i].isLive()) {
+                tmp = random.nextInt(armyUnitsSize);
+                if (defenderArmy[tmp].isLive()) {
+                    attackerArmy[i].attack(defenderArmy[tmp]);
+                    return false;
+                }
+                else {
+                    System.out.println("You can not kill " + defenderArmy[tmp].getName() + " for the second time");
+                    if (howManySoldiersRemained(defenderArmy) == 0) {
+                        endFight = true;
+                        return endFight;
                     }
                 }
             }
         }
+        return endFight;
     }
 
-
-    public static int howManySoldiers(Monster[] army) {
+    public static int howManySoldiersRemained(Monster[] army) {
         int crew = armyUnitsSize;
         for (int i = 0; i < armyUnitsSize; i++) {
             if (army[i].checkIfKilled())
                 crew--;
         }
-        System.out.println("CREW: "+crew);
+        System.out.println("CREW: " + crew);
         return crew;
     }
 
     public static int healthSum(Monster[] army) {
         int healthSum = 0;
         for (int i = 0; i < armyUnitsSize; i++) {
-            healthSum+=army[i].getHealth();
+            healthSum += army[i].getHealth();
         }
         return healthSum;
     }
@@ -109,13 +100,19 @@ public class Main {
     private static void armyGenerator(int armyUnitsSize, Monster[] Army, Random random) {
         int intMonsterType;
         for (int i = 0; i < armyUnitsSize; i++) {
-            intMonsterType = random.nextInt(3) + 1;
+            intMonsterType = random.nextInt(6) + 1;
             if (intMonsterType == 1)
                 Army[i] = new Elf();
             if (intMonsterType == 2)
                 Army[i] = new Archer();
             if (intMonsterType == 3)
                 Army[i] = new Druid();
+            if (intMonsterType == 4)
+                Army[i] = new Halberdier();
+            if (intMonsterType == 5)
+                Army[i] = new Monk();
+            if (intMonsterType == 6)
+                Army[i] = new Swordfish();
         }
     }
 }
