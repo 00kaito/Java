@@ -36,7 +36,7 @@ public class FileReadingAndOperating {
 	public int sprawdzLiczbe(BufferedReader br) throws IOException{
 		boolean poprawnie = false;
 		int j = 0;
-		
+		// vsc test
 		do{
 			try{
 				j = Integer.parseInt(br.readLine());
